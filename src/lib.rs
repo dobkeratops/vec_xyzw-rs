@@ -205,6 +205,36 @@ impl<B,A:PartialEq<B>> PartialEq<Vec3<B>> for Vec3<A>
 
 macro_rules! impl_operator_per_elem {
 	($({$trait:ident,$opfn:ident},)*)=>{
+
+		//implement the operator for value types
+		$(impl<B:Copy+Default, T:Copy+Default+$trait<B>> $trait<Vec2<B>> for Vec2<T>
+			where <T as $trait<B> >::Output : Copy+Default
+		{
+			type Output=Vec2< 
+				<T as $trait<B>>::Output
+			>;
+			fn $opfn(self,other:Vec2<B>)->Self::Output{
+				Vec2{
+					x: self.x.$opfn(other.x),
+					y: self.y.$opfn(other.y),
+				}
+			}
+		})*
+		//implement the operator for value  x scalar
+		$(impl<B:Copy+Default, T:Copy+Default+$trait<B>> $trait<B> for Vec2<T>
+			where <T as $trait<B> >::Output : Copy+Default
+		{
+			type Output=Vec2< 
+				<T as $trait<B>>::Output
+			>;
+			fn $opfn(self,other:B)->Self::Output{
+				Vec2{
+					x: self.x.$opfn(other),
+					y: self.y.$opfn(other),
+				}
+			}
+		})*
+
 		//implement the operator for value types
 		$(impl<B:Copy+Default, T:Copy+Default+$trait<B>> $trait<Vec3<B>> for Vec3<T>
 			where <T as $trait<B> >::Output : Copy+Default
@@ -220,18 +250,68 @@ macro_rules! impl_operator_per_elem {
 				}
 			}
 		})*
-		//implement the operator for reference types
-		$(impl<'a,'b,B:Copy+Default, T:Copy+Default+$trait<B>> $trait<&'b Vec3<B>> for &'a Vec3<T>
+		//implement the operator for value  x scalar
+		$(impl<B:Copy+Default, T:Copy+Default+$trait<B>> $trait<B> for Vec3<T>
 			where <T as $trait<B> >::Output : Copy+Default
 		{
 			type Output=Vec3< 
 				<T as $trait<B>>::Output
 			>;
-			fn $opfn(self,other:&'b Vec3<B>)->Self::Output{
+			fn $opfn(self,other:B)->Self::Output{
 				Vec3{
+					x: self.x.$opfn(other),
+					y: self.y.$opfn(other),
+					z: self.z.$opfn(other),
+				}
+			}
+		})*
+		//4:implement the operator for value types
+		$(impl<B:Copy+Default, T:Copy+Default+$trait<B>> $trait<Vec4<B>> for Vec4<T>
+			where <T as $trait<B> >::Output : Copy+Default
+		{
+			type Output=Vec4< 
+				<T as $trait<B>>::Output
+			>;
+			fn $opfn(self,other:Vec4<B>)->Self::Output{
+				Vec4{
 					x: self.x.$opfn(other.x),
 					y: self.y.$opfn(other.y),
 					z: self.z.$opfn(other.z),
+					w: self.w.$opfn(other.w),
+				}
+			}
+		})*
+
+		//4 ;implement the operator for value  x scalar
+		$(impl<B:Copy+Default, T:Copy+Default+$trait<B>> $trait<B> for Vec4<T>
+			where <T as $trait<B> >::Output : Copy+Default
+		{
+			type Output=Vec4< 
+				<T as $trait<B>>::Output
+			>;
+			fn $opfn(self,other:B)->Self::Output{
+				Vec4{
+					x: self.x.$opfn(other),
+					y: self.y.$opfn(other),
+					z: self.z.$opfn(other),
+					w: self.z.$opfn(other),
+				}
+			}
+		})*
+
+		//implement the operator for reference types
+		$(impl<'a,'b,B:Copy+Default, T:Copy+Default+$trait<B>> $trait<&'b Vec4<B>> for &'a Vec4<T>
+			where <T as $trait<B> >::Output : Copy+Default
+		{
+			type Output=Vec4< 
+				<T as $trait<B>>::Output
+			>;
+			fn $opfn(self,other:&'b Vec4<B>)->Self::Output{
+				Vec4{
+					x: self.x.$opfn(other.x),
+					y: self.y.$opfn(other.y),
+					z: self.z.$opfn(other.z),
+					w: self.z.$opfn(other.w),
 				}
 			}
 		})*
@@ -247,6 +327,15 @@ macro_rules! impl_assign_operator_per_elem {
 				self.x.$opfn(other.x);
 				self.y.$opfn(other.y);
 				self.z.$opfn(other.z);
+			}
+		})*
+
+		$(impl<B:Copy+Default, T:Copy+Default+$trait<B>> $trait<B> for Vec3<T>
+		{
+			fn $opfn<'a>(&'a mut self,other:B){
+				self.x.$opfn(other);
+				self.y.$opfn(other);
+				self.z.$opfn(other);
 			}
 		})*
 		// todo - how does it work for &mut self
