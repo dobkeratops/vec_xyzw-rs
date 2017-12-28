@@ -14,7 +14,7 @@ mod tests {
 
 // dammit.. have to commit to 'Copy' types for current sources :(
 
-type DefaultElemType=f32;
+pub type DefaultElemType=f32;
 
 #[derive(Debug,Clone,Copy,Default)]
 pub struct Vec1<X:Copy+Default=DefaultElemType>{pub x:X}
