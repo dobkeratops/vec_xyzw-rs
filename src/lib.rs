@@ -74,7 +74,7 @@ impl_index!(isize);
 
 /// Conversions for vector types.
 //pub mod conversions {
-	use super::{Vec1,Vec2,Vec3,Vec4};
+	//use super::{Vec1,Vec2,Vec3,Vec4};
 	impl IsNot<Vec3<f32>> for Vec3<f64>{}
 	impl IsNot<Vec3<f64>> for Vec3<f32>{}
 	impl IsNot<Vec2<f32>> for Vec2<f64>{}
