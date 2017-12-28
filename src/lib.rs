@@ -75,6 +75,13 @@ impl_index!(isize);
 /// Conversions for vector types.
 mod conversions {
 	use super::{Vec1,Vec2,Vec3,Vec4};
+	impl IsNot<Vec3<f32>> for Vec3<f64>{}
+	impl IsNot<Vec3<f64>> for Vec3<f32>{}
+	impl IsNot<Vec2<f32>> for Vec2<f64>{}
+	impl IsNot<Vec2<f64>> for Vec2<f32>{}
+	impl IsNot<Vec4<f32>> for Vec4<f64>{}
+	impl IsNot<Vec4<f64>> for Vec4<f32>{}
+
 	/// conversion to and from tuple types
 /*
 // it wont allow that, only 'into'
