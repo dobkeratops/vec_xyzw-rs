@@ -353,8 +353,8 @@ impl_operator_per_elem![{Add,add},{Sub,sub},{Mul,mul},{Div,div},{BitAnd,bitand},
 
 impl_assign_operator_per_elem![{AddAssign,add_assign},{SubAssign,sub_assign},{MulAssign,mul_assign},{DivAssign,div_assign},{BitAndAssign,bitand_assign},{BitOrAssign,bitor_assign},{BitXorAssign,bitxor_assign},];
 
-pub trait VElem : Copy+Clone{}
-impl<T:Copy+Clone> VElem for T{}
+pub trait VElem : Copy+Clone+Default{}
+impl<T:Copy+Clone+Default> VElem for T{}
 //impl VElem for f32;
 
 /// todo ..eliminate
