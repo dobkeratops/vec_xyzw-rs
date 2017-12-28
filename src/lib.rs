@@ -16,16 +16,16 @@ mod tests {
 
 pub type DefaultElemType=f32;
 
-#[derive(Debug,Clone)]
+#[derive(Debug,Clone,Copy)]
 pub struct Vec1<X:VElem=DefaultElemType>{pub x:X}
 
-#[derive(Debug,Clone)]
+#[derive(Debug,Clone,Copy)]
 pub struct Vec2<X:VElem=DefaultElemType,Y:VElem=X>{pub x:X,pub y:Y}
 
-#[derive(Debug,Clone)]
+#[derive(Debug,Clone,Copy)]
 pub struct Vec3<X:VElem=DefaultElemType,Y:VElem=X,Z:VElem=Y>{pub x:X,pub y:Y,pub z:Z}
 
-#[derive(Debug,Clone)]
+#[derive(Debug,Clone,Copy)]
 pub struct Vec4<X:VElem=DefaultElemType,Y:VElem=X,Z:VElem=Y,W:VElem=Z>{pub x:X,pub y:Y,pub z:Z,pub w:W}
 
 // if all parts are homogeneous, impl index (TODO - & iter)
@@ -220,6 +220,7 @@ macro_rules! impl_operator_per_elem {
 				}
 			}
 		})*
+/*
 		//implement the operator for value  x scalar
 		$(impl<B:VElem, T:VElem+$trait<B>> $trait<B> for Vec2<T>
 			where <T as $trait<B> >::Output : VElem
@@ -234,7 +235,7 @@ macro_rules! impl_operator_per_elem {
 				}
 			}
 		})*
-
+*/
 		//implement the operator for value types
 		$(impl<B:VElem, T:VElem+$trait<B>> $trait<Vec3<B>> for Vec3<T>
 			where <T as $trait<B> >::Output : VElem
@@ -250,6 +251,7 @@ macro_rules! impl_operator_per_elem {
 				}
 			}
 		})*
+/*
 		//implement the operator for value  x scalar
 		$(impl<B:VElem, T:VElem+$trait<B>> $trait<B> for Vec3<T>
 			where <T as $trait<B> >::Output : VElem
@@ -265,6 +267,7 @@ macro_rules! impl_operator_per_elem {
 				}
 			}
 		})*
+*/
 		//4:implement the operator for value types
 		$(impl<B:VElem, T:VElem+$trait<B>> $trait<Vec4<B>> for Vec4<T>
 			where <T as $trait<B> >::Output : VElem
@@ -281,7 +284,7 @@ macro_rules! impl_operator_per_elem {
 				}
 			}
 		})*
-
+/*
 		//4 ;implement the operator for value  x scalar
 		$(impl<B:VElem, T:VElem+$trait<B>> $trait<B> for Vec4<T>
 			where <T as $trait<B> >::Output : VElem
@@ -298,7 +301,8 @@ macro_rules! impl_operator_per_elem {
 				}
 			}
 		})*
-
+*/
+/*
 		//implement the operator for reference types
 		$(impl<'a,'b,B:VElem, T:Copy+$trait<B>> $trait<&'b Vec4<B>> for &'a Vec4<T>
 			where <T as $trait<B> >::Output : VElem
@@ -315,6 +319,7 @@ macro_rules! impl_operator_per_elem {
 				}
 			}
 		})*
+*/
 	}
 }
 
@@ -329,7 +334,7 @@ macro_rules! impl_assign_operator_per_elem {
 				self.z.$opfn(other.z);
 			}
 		})*
-
+/*
 		$(impl<B:VElem, T:VElem+$trait<B>> $trait<B> for Vec3<T>
 		{
 			fn $opfn<'a>(&'a mut self,other:B){
@@ -338,6 +343,7 @@ macro_rules! impl_assign_operator_per_elem {
 				self.z.$opfn(other);
 			}
 		})*
+*/
 		// todo - how does it work for &mut self
 		//implement the operator for reference types
 	}
