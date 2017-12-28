@@ -72,6 +72,117 @@ impl_index!(u8);
 impl_index!(usize);
 impl_index!(isize);
 
+/// Conversions for vector types.
+mod conversions {
+	use super::{Vec1,Vec2,Vec3,Vec4};
+	/// conversion to and from tuple types
+/*
+// it wont allow that, only 'into'
+	impl<X:Clone> From<Vec1<X>> for (X,){
+		fn from(v:&Vec1<X>)->Self{(v.x.clone(),)}
+	}
+	impl<X:Clone,Y:Clone> From<Vec2<X,Y>> for (X,Y){
+		fn from(v:&Vec2<X,Y>)->Self{(v.x.clone(),v.y.clone())}
+	}
+	impl<X:Clone,Y:Clone,Z:Clone> From<Vec3<X,Y,Z>> for (X,Y,Z){
+		fn from(v:&Vec3<X,Y,Z>)->Self{(v.x.clone(),v.y.clone(),v.z.clone())}
+	}
+	impl<X:Clone,Y:Clone,Z:Clone,W:Clone> From<Vec4<X,Y,Z,W>> for (X,Y,Z,W){
+		fn from(v:&Vec4<X,Y,Z,W>)->Self{(v.x.clone(),v.y.clone(),v.z.clone(),v.w.clone())}
+	}
+*/
+
+	impl<X:Copy+Default,Y:Copy+Default> Into< (X,Y) > for Vec2<X,Y>  {
+		fn into(self)->(X,Y){ (self.x.clone(),self.y.clone()) }
+	}
+	impl<X:Copy+Default,Y:Copy+Default,Z:Copy+Default> Into< (X,Y,Z) > for Vec3<X,Y,Z>  {
+		fn into(self)->(X,Y,Z){ (self.x.clone(),self.y.clone(),self.z.clone()) }
+	}
+	impl<X:Copy+Default,Y:Copy+Default,Z:Copy+Default,W:Copy+Default> Into< (X,Y,Z,W) > for Vec4<X,Y,Z,W>  {
+		fn into(self)->(X,Y,Z,W){ (self.x.clone(),self.y.clone(),self.z.clone(),self.w.clone()) }
+	}
+
+	impl<X:Copy+Default,Y:Copy+Default> From< (X,Y) > for Vec2<X,Y>  {
+		fn from(src:(X,Y))->Self { Vec2{x:src.0 .clone(),y:src.1 .clone()} }
+	}
+
+	impl<X:Copy+Default,Y:Copy+Default,Z:Copy+Default> From< (X,Y,Z) > for Vec3<X,Y,Z>  {
+		fn from(src:(X,Y,Z))->Self { Vec3{x:src.0 .clone(),y:src.1 .clone(),z:src.2 .clone()} }
+	}
+	impl<X:Copy+Default,Y:Copy+Default,Z:Copy+Default,W:Copy+Default> From< (X,Y,Z,W) > for Vec4<X,Y,Z,W>  {
+		fn from(src:(X,Y,Z,W))->Self { Vec4{x:src.0 .clone(),y:src.1 .clone(),z:src.2 .clone(),w:src.3 .clone()} }
+	}
+
+	/// conversion to & from array types
+	impl<T:Copy+Default> Into< [T;2] > for Vec2<T>  {
+		fn into(self)->[T;2]{ [self.x.clone(),self.y.clone()] }
+	}
+	impl<T:Copy+Default> Into< [T;3] > for Vec3<T>  {
+		fn into(self)->[T;3]{ [self.x.clone(),self.y.clone(),self.z.clone()] }
+	}
+	impl<T:Copy+Default> Into< [T;4] > for Vec4<T>  {
+		fn into(self)->[T;4]{ [self.x.clone(),self.y.clone(),self.z.clone(),self.w.clone()] }
+	}
+	impl<T:Copy+Default> From< [T;2] > for Vec2<T>  {
+		fn from(src:[T;2])->Self { Vec2{x:src[0] .clone(),y:src[1] .clone()} }
+	}
+
+	impl<T:Copy+Default> From< [T;3] > for Vec3<T>  {
+		fn from(src:[T;3])->Self { Vec3{x:src[0] .clone(),y:src[1] .clone(),z:src[2] .clone()} }
+	}
+	impl<T:Copy+Default> From< [T;4] > for Vec4<T>  {
+		fn from(src:[T;4])->Self { Vec4{x:src[0] .clone(),y:src[1] .clone(),z:src[2] .clone(),w:src[3] .clone()} }
+	}
+
+
+	/// helper trait to hack restriction, to avoid clash between generic componentwise conversions and the 'reflecti
+	pub trait IsNot<B>{}
+	impl IsNot<f32> for f64{}
+	impl IsNot<f64> for f32{}
+	impl IsNot<i32> for f32{}
+	impl IsNot<f32> for i32{}
+	impl IsNot<i8> for f32{}
+	impl IsNot<f32> for i8{}
+	impl IsNot<u8> for f32{}
+	impl IsNot<f32> for u8{}
+
+	// TODO could roll a macro for other types
+	/// Generic componentwise conversions to and from VecN<f32>
+	impl<B:Copy+Default> From<Vec2<B>> for Vec2<f32> where f32:From<B>, B:IsNot<f32> {
+		fn from(b:Vec2<B>)->Self {
+			Vec2::<f32>{ x: b.x.into(), y: b.y.into() }		
+		}
+	}
+	impl<B:Copy+Default> From<Vec2<f32>> for Vec2<B> where B:From<f32>, f32:IsNot<B> {
+		fn from(b:Vec2<f32>)->Self {
+			Vec2::<B>{ x: b.x.into(), y: b.y.into() }		
+		}
+	}
+
+	impl<B:Copy+Default> From<Vec3<B>> for Vec3<f32> where f32:From<B>, B:IsNot<f32> {
+		fn from(b:Vec3<B>)->Self {
+			Vec3::<f32>{ x: b.x.into(), y: b.y.into(), z: b.z.into() }		
+		}
+	}
+	impl<B:Copy+Default> From<Vec3<f32>> for Vec3<B> where B:From<f32>, f32:IsNot<B> {
+		fn from(b:Vec3<f32>)->Self {
+			Vec3::<B>{ x: b.x.into(), y: b.y.into(), z: b.z.into() }		
+		}
+	}
+
+	impl<B:Copy+Default> From<Vec4<B>> for Vec4<f32> where f32:From<B>, B:IsNot<f32> {
+		fn from(b:Vec4<B>)->Self {
+			Vec4::<f32>{ x: b.x.into(), y: b.y.into(), z: b.z.into(), w: b.w.into() }		
+		}
+	}
+	impl<B:Copy+Default> From<Vec4<f32>> for Vec4<B> where B:From<f32>, f32:IsNot<B> {
+		fn from(b:Vec4<f32>)->Self {
+			Vec4::<B>{ x: b.x.into(), y: b.y.into(), z: b.z.into(), w: b.w.into() }		
+		}
+	}
+
+}
+pub use conversions::*;
 
 // Didn't want to impl anything here but
 // it seems it's essential to impl the
